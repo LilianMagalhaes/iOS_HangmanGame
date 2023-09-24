@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E222D252ABFB70700C04CEB /* ApiKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E222D242ABFB70700C04CEB /* ApiKey.swift */; };
 		1E2478C429DF32F200D86355 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2478C329DF32F200D86355 /* WelcomeViewController.swift */; };
 		1E2478C629DF338400D86355 /* MovieModeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2478C529DF338400D86355 /* MovieModeViewController.swift */; };
 		1E2478CA29DF33DE00D86355 /* GameStatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2478C929DF33DE00D86355 /* GameStatsViewController.swift */; };
@@ -48,6 +49,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1E222D242ABFB70700C04CEB /* ApiKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKey.swift; sourceTree = "<group>"; };
 		1E2478C329DF32F200D86355 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		1E2478C529DF338400D86355 /* MovieModeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieModeViewController.swift; sourceTree = "<group>"; };
 		1E2478C929DF33DE00D86355 /* GameStatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStatsViewController.swift; sourceTree = "<group>"; };
@@ -123,9 +125,9 @@
 		1E7E2EE629DDF80800B6525D /* Hangman Game */ = {
 			isa = PBXGroup;
 			children = (
-				1E7E2F1929DDF8CC00B6525D /* Model */,
 				1E7E2EE729DDF80800B6525D /* AppDelegate.swift */,
 				1E7E2EE929DDF80800B6525D /* SceneDelegate.swift */,
+				1E7E2F1929DDF8CC00B6525D /* Model */,
 				1E7E2F1829DDF8B900B6525D /* Controller */,
 				1E7E2F1A29DDF8D400B6525D /* View */,
 				1E7E2EF029DDF80800B6525D /* Assets.xcassets */,
@@ -168,12 +170,13 @@
 			isa = PBXGroup;
 			children = (
 				1E7E2F1D29DDF92300B6525D /* Player.swift */,
-				1E7E2F1F29DDF96100B6525D /* WordManager.swift */,
-				1E2478CB29DF33F800D86355 /* GameStats.swift */,
-				1E2559F629E723B400A351B2 /* MovieManager.swift */,
-				1E2559F829E72CBD00A351B2 /* ImdbIds.swift */,
 				1E2559FA29E7325400A351B2 /* Movie.swift */,
 				1E64F0512ABCCBA300C27C02 /* Word.swift */,
+				1E7E2F1F29DDF96100B6525D /* WordManager.swift */,
+				1E2559F629E723B400A351B2 /* MovieManager.swift */,
+				1E2478CB29DF33F800D86355 /* GameStats.swift */,
+				1E2559F829E72CBD00A351B2 /* ImdbIds.swift */,
+				1E222D242ABFB70700C04CEB /* ApiKey.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -328,6 +331,7 @@
 				1E2559F729E723B500A351B2 /* MovieManager.swift in Sources */,
 				1E7E2EEA29DDF80800B6525D /* SceneDelegate.swift in Sources */,
 				1E2478C629DF338400D86355 /* MovieModeViewController.swift in Sources */,
+				1E222D252ABFB70700C04CEB /* ApiKey.swift in Sources */,
 				1E7E2F1E29DDF92300B6525D /* Player.swift in Sources */,
 				1E64F0502ABCA28500C27C02 /* LogInViewController.swift in Sources */,
 				1E7C5C1929EE768000C618BD /* WordModeViewController.swift in Sources */,
