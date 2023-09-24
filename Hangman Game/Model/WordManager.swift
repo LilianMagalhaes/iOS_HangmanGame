@@ -8,9 +8,13 @@ import Foundation
 
 class WordManager {
     static let shared = WordManager()
-    
-    private let apiKey = "e0c98862e3msh647990220ccb3aap1bb5fejsnc76dc1892be8"
+    private let apiKey = WordApiKey.shared.getApiKey()
     private let baseUrl = "https://wordsapiv1.p.rapidapi.com/words/?random=true"
+   
+    func fetchRandomWord(maxRetries: Int, completion: @escaping (Result<Word, Error>) -> Void) {
+            reFetch(maxRetries: maxRetries, currentRetry: 0, completion: completion)
+        }
+    
     
     private init() {}
     
@@ -23,9 +27,7 @@ class WordManager {
         return URLSession(configuration: config)
     }
     
-    func fetchRandomWord(maxRetries: Int, completion: @escaping (Result<Word, Error>) -> Void) {
-            reFetch(maxRetries: maxRetries, currentRetry: 0, completion: completion)
-        }
+  
     
     private func reFetch(maxRetries: Int, currentRetry: Int, completion: @escaping (Result<Word, Error>) -> Void) {
             fetchWord { result in
@@ -44,7 +46,7 @@ class WordManager {
             }
         }
     
-    func fetchWord(completion: @escaping (Result<Word, Error>) -> Void) {
+    private func fetchWord(completion: @escaping (Result<Word, Error>) -> Void) {
         guard let url = URL(string: baseUrl) else {
             completion(.failure(NetworkError.invalidURL))
             return
@@ -55,12 +57,10 @@ class WordManager {
                 completion(.failure(error))
                 return
             }
-            
             guard let data = data else {
                 completion(.failure(NetworkError.noData))
                 return
             }
-            
             do {
                 let wordData = try JSONDecoder().decode(Word.self, from: data)
                 if self.isValidWordData(wordData) {
@@ -77,7 +77,7 @@ class WordManager {
     }
     
     private func isValidWordData(_ wordData: Word) -> Bool {
-        guard wordData.word.count > 12 else {
+        guard wordData.word.count < 13 else {
             return false
         }
         print("wordCount: ", wordData.word.count)
@@ -97,54 +97,6 @@ enum NetworkError: Error {
     case noData
     case invalidWordData
 }
-
-
-
-
-
-/*    func getWord(callback: @escaping (Bool, Data?) -> Void) {
- guard let url = URL(string: baseUrl + "word") else {
- callback(false, nil)
- return
- }
- task?.cancel()
- task = session.dataTask(with: url) { (data, response, error) in
- DispatchQueue.main.async {
- guard let data = data, error == nil,
- let response = response as? HTTPURLResponse, response.statusCode == 200 else {
- callback(false, nil)
- return
- }
- callback(true, data)
- }
- }
- task?.resume()
- }
- */
-
-/*
- private func parseWordData(_ data: Data) -> (String?, String?, String?, String?) {
- do {
- let decoder = JSONDecoder()
- let wordData = try decoder.decode(Word.self, from: data)
- 
- if let firstResult = wordData.results.first {
- let word = wordData.word
- let partOfSpeech = firstResult.partOfSpeech
- let definition = firstResult.definition
- let typeOf = firstResult.typeOf?.joined(separator: ", ") ?? ""
- 
- return (word, definition, partOfSpeech, typeOf)
- } else {
- return (nil, nil, nil, nil)
- }
- } catch {
- print("Error decoding JSON: \(error)")
- return (nil, nil, nil, nil)
- }
- }
- */
-
 
 
 

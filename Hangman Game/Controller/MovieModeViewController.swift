@@ -18,7 +18,6 @@ class MovieModeViewController: UIViewController {
     
     @IBOutlet var hangmanImage: UIImageView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
     @IBOutlet weak var movieTitleLabel: UILabel!  //TODO: Label to test if we got the film title, delete after finished testing the game.
     @IBOutlet weak var newMovieGameButton: UIButton!
     
@@ -35,55 +34,10 @@ class MovieModeViewController: UIViewController {
         startApp()
     }
     
-    private func setupUI() {
-        addBackground()
-        movieTitleLabel.isHidden = true /// Hide the test label during the game.
-        configureKeyboardButtons()
-    }
-        
-    private func configureKeyboardButtons() {
-        for button in KeyboardButtons {
-            formatKeyboardButton(button: button)
-            button.addTarget(self, action: #selector(keyboardButtonTapped(_:)), for: .touchUpInside)
-        }
-    }
-    
-    private func addBackground() {
-        let backgroundImage = UIImageView(frame: UIScreen.main.bounds)
-            backgroundImage.image = UIImage(named: "Bg_01")
-        /// Add the UIImageView as a subview to the view controller's view
-        self.view.insertSubview(backgroundImage, at: 0)
-    }
-    
-    private func formatKeyboardButton (button: UIButton) {
-        button.isEnabled = true
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.backgroundColor = UIColor(red: 8/256, green: 60/256, blue: 129/256, alpha: 1)
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.5
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 2
-    }
-    
-    private func startApp () {
-        self.toggleActivityIndicator(shown: true)
-        getNewMovie()
-    }
-    
-    private func resetScores() {
-        currentGameMissedTries  = 0
-        currentGameTries = 0
-        correctLettersGuessed = 0
-        updateMissedLabel(missedTries: currentGameMissedTries)
-        updateCorrectLabel(correctTries: correctLettersGuessed)
-        titleLabelContainer.arrangedSubviews.forEach { $0.removeFromSuperview() }
-    }
-    
     @IBAction func PlayNewMovieGame(_ sender: Any) {
         getNewMovie()
         configureKeyboardButtons()
         }
-    
     
     func getNewMovie() {
         let imageName = "Hang00"
@@ -94,7 +48,8 @@ class MovieModeViewController: UIViewController {
         MovieManager.shared.getMovie() { (success, data) in
             self.toggleActivityIndicator(shown: false)
             guard let data = data, success == true else {
-                self.presentAlert()
+                let message = "Could not find data."
+                self.presentErrorAlert(message:message)
                 return
             }
             self.movie = data
@@ -115,6 +70,74 @@ class MovieModeViewController: UIViewController {
         }
     }
     
+
+    
+    @IBAction func keyboardButtonTapped(_ sender: UIButton) {
+        currentGameTries += 1
+        print("Total of Tries: \(currentGameTries)")
+        var tappedLetter: String
+        if let buttonText = sender.titleLabel?.text?.uppercased() {
+            sender.backgroundColor = UIColor.clear
+            sender.isEnabled = false
+            tappedLetter = buttonText.uppercased()
+            let doesLetterExists = containsLetter(letter: tappedLetter)
+            if doesLetterExists == true {
+              let  numberCorrectLettters = countCorrectLetters(letter: tappedLetter)
+                showLetters(letter: tappedLetter)
+                correctLettersGuessed += numberCorrectLettters
+                print("correct Letters: \(correctLettersGuessed)")
+                updateCorrectLabel(correctTries: correctLettersGuessed)
+            }
+            else {
+                updateGameMissedTries()
+            }
+        }
+    }
+
+    private func setupUI() {
+        addBackground()
+        movieTitleLabel.isHidden = true /// Hide the test label during the game.
+        configureKeyboardButtons()
+    }
+       
+    private func startApp () {
+        self.toggleActivityIndicator(shown: true)
+        getNewMovie()
+    }
+    
+    private func addBackground() {
+        let backgroundImage = UIImageView(frame: UIScreen.main.bounds)
+            backgroundImage.image = UIImage(named: "Bg_01")
+        /// Add the UIImageView as a subview to the view controller's view
+        self.view.insertSubview(backgroundImage, at: 0)
+    }
+    
+    private func configureKeyboardButtons() {
+        for button in KeyboardButtons {
+            formatKeyboardButton(button: button)
+            button.addTarget(self, action: #selector(keyboardButtonTapped(_:)), for: .touchUpInside)
+        }
+    }
+
+    private func formatKeyboardButton (button: UIButton) {
+        button.isEnabled = true
+        button.setTitleColor(UIColor.white, for: .normal)
+        button.backgroundColor = UIColor(red: 8/256, green: 60/256, blue: 129/256, alpha: 1)
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.5
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 2
+    }
+
+    private func resetScores() {
+        currentGameMissedTries  = 0
+        currentGameTries = 0
+        correctLettersGuessed = 0
+        updateMissedLabel(missedTries: currentGameMissedTries)
+        updateCorrectLabel(correctTries: correctLettersGuessed)
+        titleLabelContainer.arrangedSubviews.forEach { $0.removeFromSuperview() }
+    }
+    
     private func toggleActivityIndicator(shown: Bool) {
         newMovieGameButton.isHidden = shown
         activityIndicator.isHidden = !shown
@@ -130,11 +153,9 @@ class MovieModeViewController: UIViewController {
         updateGame(missedTries: currentGameMissedTries)
     }
     
-    func updateMissedLabel(missedTries: Int){
+    private func updateMissedLabel(missedTries: Int){
         missedTriesLabel.text = "\(missedTries)/6"
     }
-    
-    private func updateScore() {}
     
     private func updateGame(missedTries: Int) {
         var imageName: String = ""
@@ -172,29 +193,39 @@ class MovieModeViewController: UIViewController {
         }
     }
     
-    @IBAction func keyboardButtonTapped(_ sender: UIButton) {
-        currentGameTries += 1
-        print("Total of Tries: \(currentGameTries)")
-        var tappedLetter: String
-        if let buttonText = sender.titleLabel?.text?.uppercased() {
-            sender.backgroundColor = UIColor.clear
-            sender.isEnabled = false
-            tappedLetter = buttonText.uppercased()
-            let doesLetterExists = containsLetter(letter: tappedLetter)
-            if doesLetterExists == true {
-              let  numberCorrectLettters = countCorrectLetters(letter: tappedLetter)
-                showLetters(letter: tappedLetter)
-                correctLettersGuessed += numberCorrectLettters
-                print("correct Letters: \(correctLettersGuessed)")
-                updateCorrectLabel(correctTries: correctLettersGuessed)
+    private func createMovieTitleLabel(title: String) {
+        titleLabelContainer.axis = .horizontal // Set the axis to horizontal for a horizontal stack view
+        titleLabelContainer.alignment = .center // Set the alignment to center for the stack view
+        titleLabelContainer.spacing = 10 // Set the spacing between labels
+        let titleString = title
+        titleString.forEach { char in
+            let stackCharContainer = UIStackView()
+            stackCharContainer.axis = .vertical
+            stackCharContainer.alignment = .center // Set the alignment to center for the stack view
+            stackCharContainer.spacing = -12
+            let guideLabel = UILabel()
+            let charLabel = UILabel()
+            if char == " " {
+                guideLabel.text = "" // Display empty string for empty spaces
+                charLabel.text = ""
+            } else {
+                guideLabel.text = "_" // Display "_" for other characters
+                charLabel.text = String(char.uppercased()) // Convert character to string and set as text
             }
-            else {
-                updateGameMissedTries()
-            }
+            guideLabel.font = UIFont(name: "Chalkduster", size: 20)
+            charLabel.font = UIFont(name: "Chalkduster", size: 20)
+            guideLabel.textAlignment = .center // Center align the guide label's text
+            charLabel.textAlignment = .center // Center align the character label's text
+            guideLabel.textColor = UIColor.white // UIColor(red: 230/256, green: 231/256, blue: 180/256, alpha: 1)
+            charLabel.textColor = UIColor.clear
+            stackCharContainer.addArrangedSubview(charLabel)
+            stackCharContainer.addArrangedSubview(guideLabel)
+            
+            titleLabelContainer.addArrangedSubview(stackCharContainer) // Add stackCharContainer to the titleLabelContainer
         }
     }
     
-    func containsLetter(letter: String) -> Bool {
+    private func containsLetter(letter: String) -> Bool {
         let movieTitle = self.movie.title.uppercased()
         return movieTitle.contains(letter)
     }
@@ -239,40 +270,7 @@ class MovieModeViewController: UIViewController {
         return numberOfCharactersWithoutSpaces
     }
     
-
-   
-    private func createMovieTitleLabel(title: String) {
-        titleLabelContainer.axis = .horizontal // Set the axis to horizontal for a horizontal stack view
-        titleLabelContainer.alignment = .center // Set the alignment to center for the stack view
-        titleLabelContainer.spacing = 10 // Set the spacing between labels
-        let titleString = title
-        titleString.forEach { char in
-            let stackCharContainer = UIStackView()
-            stackCharContainer.axis = .vertical
-            stackCharContainer.alignment = .center // Set the alignment to center for the stack view
-            stackCharContainer.spacing = -12
-            let guideLabel = UILabel()
-            let charLabel = UILabel()
-            if char == " " {
-                guideLabel.text = "" // Display empty string for empty spaces
-                charLabel.text = ""
-            } else {
-                guideLabel.text = "_" // Display "_" for other characters
-                charLabel.text = String(char.uppercased()) // Convert character to string and set as text
-            }
-            guideLabel.font = UIFont(name: "Chalkduster", size: 20)
-            charLabel.font = UIFont(name: "Chalkduster", size: 20)
-            guideLabel.textAlignment = .center // Center align the guide label's text
-            charLabel.textAlignment = .center // Center align the character label's text
-            guideLabel.textColor = UIColor.white // UIColor(red: 230/256, green: 231/256, blue: 180/256, alpha: 1)
-            charLabel.textColor = UIColor.clear
-            stackCharContainer.addArrangedSubview(charLabel)
-            stackCharContainer.addArrangedSubview(guideLabel)
-            
-            titleLabelContainer.addArrangedSubview(stackCharContainer) // Add stackCharContainer to the titleLabelContainer
-        }
-    }
-    
+    private func updateScore() {}
 }
         
 

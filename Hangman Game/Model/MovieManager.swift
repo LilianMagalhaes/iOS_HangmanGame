@@ -11,10 +11,9 @@ class MovieManager {
     static var shared = MovieManager()
     private init() {}
     private  let baseUrl = "https://www.omdbapi.com/"
-    
+    private let apiKey = MovieApiKey.shared.getApiKey()
 
     private var task: URLSessionTask?
-
     private var session = URLSession(configuration: .default)
 
     init(session: URLSession) {
@@ -23,7 +22,7 @@ class MovieManager {
     
     func getMovie( callback: @escaping(Bool, Movie?) -> Void)  {
         guard let randomMovieId = imdbIdTab.randomElement(),
-            let url = URL(string: "\(baseUrl)?apiKey=44c17920&i=\(randomMovieId)&r=json") else {
+            let url = URL(string: "\(baseUrl)?apiKey=\(apiKey)=\(randomMovieId)&r=json") else {
             callback(false, nil)
             return
             }

@@ -15,12 +15,6 @@ extension UIViewController {
             present(alert, animated: true, completion: nil)
         }
     
-    func presentAlert() {
-        let alertVC = UIAlertController(title: "Error", message: "Could not find data.", preferredStyle: .alert)
-        alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-        self.present(alertVC, animated: true, completion: nil)
-    }
-    
     func presentAlertGameTip(message: String) {
         let alertVC = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
